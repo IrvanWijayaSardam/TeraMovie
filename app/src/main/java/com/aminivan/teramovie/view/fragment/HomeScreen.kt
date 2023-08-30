@@ -107,6 +107,17 @@ class HomeScreen : Fragment() {
         binding.rvMovie.setHasFixedSize(true)
         binding.rvMovie.adapter = adapter
 
+        notificationScreen.setOnItemClickListener(object : NotificationScreen.OnItemClickListener {
+            override fun onItemClick() {
+                newDataAvail = false
+                shouldRefreshData = true
+                adapter.setListMovie(latestMovieData!!)
+            }
+        })
+
+        notificationScreen.setDismissListener {
+            newDataAvail = false
+        }
 
     }
 
@@ -129,13 +140,7 @@ class HomeScreen : Fragment() {
             requestNotificationPermission()
         }
 
-        notificationScreen.setOnItemClickListener(object : NotificationScreen.OnItemClickListener {
-            override fun onItemClick() {
-                newDataAvail = false
-                shouldRefreshData = true
-                adapter.setListMovie(latestMovieData!!)
-            }
-        })
+
 
     }
 
