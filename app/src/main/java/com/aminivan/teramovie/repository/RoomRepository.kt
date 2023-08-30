@@ -11,6 +11,6 @@ class RoomRepository @Inject constructor(private val movieDao: MovieDao) {
 
     fun deleteAllMovie() = movieDao.deleteAllMovie()
 
-    fun getAllMovie() : List<Movie> = movieDao.getAllMovie()
+    fun getAllMovie() : LiveData<List<Movie>> = movieDao.getAllMovie()
 
 }

@@ -17,6 +17,6 @@ class RoomViewModel @Inject constructor(
         roomRepository.insert(movie)
     }
 
-    fun getAllMovie(): List<Movie> = roomRepository.getAllMovie()
+    fun getAllMovie(): LiveData<List<Movie>> = roomRepository.getAllMovie()
 
 }

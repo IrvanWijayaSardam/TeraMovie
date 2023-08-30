@@ -15,6 +15,6 @@ interface MovieDao {
     fun deleteAllMovie()
 
     @Query("SELECT * FROM Movie ORDER BY id ASC LIMIT 10")
-    fun getAllMovie() : List<Movie>
+    fun getAllMovie() : LiveData<List<Movie>>
 
 }

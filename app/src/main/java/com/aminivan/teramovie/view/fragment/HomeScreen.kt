@@ -49,10 +49,11 @@ class HomeScreen : Fragment() {
     private val vmMovie : MovieViewModel by viewModels()
     private val vmRoom : RoomViewModel by viewModels()
     lateinit var adapter: MovieAdapter
+    private var isFirstFetch = true
 
     private var newDataAvail = false
     private var shouldRefreshData = false
-    private var latestMovieData: List<Movie>? = null
+    private var latestMovieData: List<Movie>? = emptyList()
 
 
     private val broadcastReceiver = object : BroadcastReceiver() {
@@ -83,7 +84,16 @@ class HomeScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MovieAdapter()
-        vmRoom.getAllMovie()
+
+        vmRoom.getAllMovie().observe(viewLifecycleOwner){
+            if (it != null){
+                latestMovieData = it
+                if(isFirstFetch){
+                    adapter.setListMovie(latestMovieData!!)
+                    isFirstFetch = false
+                }
+            }
+        }
 
         binding.rvMovie.layoutManager = LinearLayoutManager(requireActivity())
         binding.rvMovie.setHasFixedSize(true)
@@ -93,9 +103,9 @@ class HomeScreen : Fragment() {
         if (isOnline(requireContext())){
             fetchDataMovie()
         } else {
-            binding.imgNoConnection.isVisible = true
-            binding.txtInternet.setText("No Internet Connection... :(")
-            Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
+//            binding.imgNoConnection.isVisible = true
+//            binding.txtInternet.setText("No Internet Connection... :(")
+//            Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -105,12 +115,9 @@ class HomeScreen : Fragment() {
                 coroutineScope {
                     launch {
                         while (true) {
-                            delay(30000)
+                            delay(60000)
                             if (shouldRefreshData) {
                                 shouldRefreshData = false
-                                latestMovieData?.let {
-                                    adapter.setListMovie(it)
-                                }
                             }
                             vmMovie.getDataMovie()
                         }
@@ -125,7 +132,7 @@ class HomeScreen : Fragment() {
             override fun onItemClick() {
                 newDataAvail = false
                 shouldRefreshData = true
-                adapter.setListMovie(vmRoom.getAllMovie())
+                adapter.setListMovie(latestMovieData!!)
             }
         })
 
