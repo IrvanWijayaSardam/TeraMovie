@@ -1,6 +1,7 @@
 package com.aminivan.teramovie.view.fragment
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -44,6 +45,7 @@ private const val TAG = "HomeScreen"
 @AndroidEntryPoint
 class HomeScreen : Fragment() {
     private var NOTIFICATION_PERMISSION_REQUEST_CODE = 602
+    val notificationId = 1
     lateinit var binding : FragmentHomeScreenBinding
     private val notificationScreen = NotificationScreen()
     private val vmMovie : MovieViewModel by viewModels()
@@ -57,6 +59,7 @@ class HomeScreen : Fragment() {
 
 
     private val broadcastReceiver = object : BroadcastReceiver() {
+        @SuppressLint("MissingPermission")
         override fun onReceive(context: Context, intent: Intent) {
             // Display a notification
             if (!newDataAvail) {
@@ -64,6 +67,18 @@ class HomeScreen : Fragment() {
                 if (!notificationScreen.isVisible) {
                     shouldRefreshData = false
                     notificationScreen.show(parentFragmentManager, "NotificationScreenTag")
+                    val notification = NotificationCompat.Builder(context, "2")
+                        .setContentTitle("Tera Movie Data Update")
+                        .setContentText("the old data has been deleted and new data is available.")
+                        .setSmallIcon(R.drawable.baseline_notifications_24)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .setAutoCancel(true)
+                        .build()
+
+// Show the notification
+                    with(NotificationManagerCompat.from(context)) {
+                        notify(notificationId, notification)
+                    }
                 } else {
                     shouldRefreshData = false // Set the flag to refresh data when notification is clicked
                 }
@@ -93,12 +108,12 @@ class HomeScreen : Fragment() {
                 if(isFirstFetch){
                     adapter.setListMovie(latestMovieData!!)
                     isFirstFetch = false
-                    binding.imgNoConnection.isVisible = false
+                    binding.imgNoConnection.visibility = View.GONE
                     binding.txtInternet.isVisible = false
                 }
             } else {
-                    binding.imgNoConnection.isVisible = true
-                    binding.txtInternet.setText("Your Movie List is Empty... :(")
+                binding.imgNoConnection.visibility = View.VISIBLE
+                binding.txtInternet.setText("Your Movie List is Empty... :(")
                     Toast.makeText(requireContext(), "Your Movie List is Empty... :(", Toast.LENGTH_SHORT).show()
             }
         }
@@ -117,6 +132,7 @@ class HomeScreen : Fragment() {
 
         notificationScreen.setDismissListener {
             newDataAvail = false
+            shouldRefreshData = true
         }
 
     }
@@ -127,7 +143,7 @@ class HomeScreen : Fragment() {
                 coroutineScope {
                     launch {
                         while (true) {
-                            delay(10000)
+                            delay(60000)
                             if (shouldRefreshData) {
                                 shouldRefreshData = false
                             }
@@ -139,9 +155,6 @@ class HomeScreen : Fragment() {
         } else {
             requestNotificationPermission()
         }
-
-
-
     }
 
     private fun hasNotificationPermission(): Boolean {
