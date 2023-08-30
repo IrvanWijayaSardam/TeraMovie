@@ -84,14 +84,22 @@ class HomeScreen : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         adapter = MovieAdapter()
+        fetchDataMovie()
 
         vmRoom.getAllMovie().observe(viewLifecycleOwner){
-            if (it != null){
+            Log.d(TAG, "onViewCreated: observer vmRoom data ${it}")
+            if (it.size > 0){
                 latestMovieData = it
                 if(isFirstFetch){
                     adapter.setListMovie(latestMovieData!!)
                     isFirstFetch = false
+                    binding.imgNoConnection.isVisible = false
+                    binding.txtInternet.isVisible = false
                 }
+            } else {
+                    binding.imgNoConnection.isVisible = true
+                    binding.txtInternet.setText("Your Movie List is Empty... :(")
+                    Toast.makeText(requireContext(), "Your Movie List is Empty... :(", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -100,13 +108,6 @@ class HomeScreen : Fragment() {
         binding.rvMovie.adapter = adapter
 
 
-        if (isOnline(requireContext())){
-            fetchDataMovie()
-        } else {
-//            binding.imgNoConnection.isVisible = true
-//            binding.txtInternet.setText("No Internet Connection... :(")
-//            Toast.makeText(requireContext(), "No Internet Connection", Toast.LENGTH_SHORT).show()
-        }
     }
 
     private fun fetchDataMovie() {
@@ -115,7 +116,7 @@ class HomeScreen : Fragment() {
                 coroutineScope {
                     launch {
                         while (true) {
-                            delay(60000)
+                            delay(10000)
                             if (shouldRefreshData) {
                                 shouldRefreshData = false
                             }
