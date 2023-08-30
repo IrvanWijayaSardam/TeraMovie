@@ -30,3 +30,4 @@ Screenshot :
 ![2](https://raw.githubusercontent.com/IrvanWijayaSardam/TeraMovie/master/Screenshoot/HomePage.png?token=GHSAT0AAAAAAB3GU4ZQPTSZXIG342I54VCUZHPUGSQ)
 ![3](https://raw.githubusercontent.com/IrvanWijayaSardam/TeraMovie/master/Screenshoot/BottomSheetNotification.png?token=GHSAT0AAAAAAB3GU4ZRBBQ47JY3YMRM3CM6ZHPUHAA)
 ![4](https://github.com/IrvanWijayaSardam/TeraMovie/blob/master/Screenshoot/PushNotification.png?raw=true)
+![5](https://github.com/IrvanWijayaSardam/TeraMovie/blob/master/Screenshoot/NegativeCase.png?raw=true)
