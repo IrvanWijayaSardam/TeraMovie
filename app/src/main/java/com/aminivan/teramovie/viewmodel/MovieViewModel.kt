@@ -64,7 +64,7 @@ class MovieViewModel @Inject constructor(
 
         workManager.enqueueUniquePeriodicWork(
             WorkerKeys.SYNC_SOURCE_DATA,
-            ExistingPeriodicWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.REPLACE,
             periodicWork
         )
     }
