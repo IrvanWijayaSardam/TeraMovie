@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.Data
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.aminivan.teramovie.api.ApiService
@@ -47,22 +49,24 @@ class MovieViewModel @Inject constructor(
         }
     }
 
-    private fun doWorkManager(){
-        val constraint = Constraints.Builder()
+    private fun doWorkManager() {
+        val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
 
-        val periodicWork = OneTimeWorkRequest.Builder(MovieWorker::class.java)
-            .setInitialDelay(0, TimeUnit.SECONDS) // Initial delay before the first execution
+        val periodicWork = PeriodicWorkRequest.Builder(
+            MovieWorker::class.java,
+            15, TimeUnit.MINUTES
+        )
+            .setConstraints(constraints)
             .build()
 
-        workManager.enqueue(periodicWork)
-
-        workManager.enqueueUniqueWork(
+        workManager.enqueueUniquePeriodicWork(
             WorkerKeys.SYNC_SOURCE_DATA,
-            ExistingWorkPolicy.KEEP,
+            ExistingPeriodicWorkPolicy.KEEP,
             periodicWork
         )
     }
+
 }

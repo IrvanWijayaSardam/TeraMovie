@@ -142,13 +142,7 @@ class HomeScreen : Fragment() {
             lifecycleScope.launch {
                 coroutineScope {
                     launch {
-                        while (true) {
-                            delay(60000)
-                            if (shouldRefreshData) {
-                                shouldRefreshData = false
-                            }
-                            vmMovie.getDataMovie()
-                        }
+                        vmMovie.getDataMovie()
                     }
                 }
             }
